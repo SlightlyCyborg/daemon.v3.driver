@@ -1,14 +1,17 @@
 #include <ncurses.h>
+#include <cstring>
 
 int main(){
 
-  int ch;
+  int ch, row, col;
+  char buf[40];
+  char name[40];
 
   //Initialization
   initscr();
 
   //No enter required
-  raw();
+  cbreak();
 
   //Remove ugliness
   noecho();
@@ -16,36 +19,29 @@ int main(){
   //Use arrow keys and fn keys
   keypad(stdscr, TRUE);
 
+  //Get the display settings using MACRO 
+  //weird...
+  getmaxyx(stdscr, row, col);
+
+  //Create a margin point
+  col = col/6;
 
   //Boot up.
-  mvprintw(5, 5, "Daemon v1.1: What is my name?");
-  move(6,5);
+  mvprintw(5, col, "Daemon v1.1: What is my name?");
+  move(6,col);
   refresh();
 
-  //I can say my name
-  ch = getch();
-  attron(A_BOLD);
-  printw("I am %c", ch);
-  attroff(A_BOLD);
-  refresh();
+  printw("I am ");
+  echo();
+  getstr(buf);
+  noecho();
+  strcpy(name, buf);
 
-  //um..
-  getch();
-  printw("...", ch);
-  refresh();
+
+  mvprintw(7,col, "I am %s, nice to meet you.", name);
   getch();
 
-  //ya..
-  mvprintw(7,5,"I didn't let you finish");
-  refresh();
-  getch();
-  endwin();	
-
-  //reasons
-  mvprintw(8,5,"..thats because I am %c", ch);
-  refresh();
-  getch();
-  endwin();	
+  endwin();
 
 
 
